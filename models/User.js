@@ -28,11 +28,6 @@ const userSchema = new mongoose.Schema({
         enum: ['admin', 'client'],
         default: 'client'
     },
-    clientProfile: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Client',
-        default: null
-    },
     isBlocked: {
         type: Boolean,
         default: false

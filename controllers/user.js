@@ -1,25 +1,21 @@
 const User = require("../models/User");
-const Client = require("../models/Client");
 const jwt = require("jsonwebtoken");
-
 const genrateToken = (user) => {
     return jwt.sign({
             id: user._id,
             role: user.role,
-            isBlocked: user.isBlocked,
-            clintProfile: user.clintProfile
+            isBlocked: user.isBlocked
         },
         process.env.JWT_SECRET, { expiresIn: '7D' })
 }
 exports.register = async(req, res) => {
     try {
-        const { fullName, email, password, role, clientProfile } = req.body;
+        const { fullName, email, password, role } = req.body;
         const user = new User({
             fullName,
             email,
             password,
-            role,
-            clientProfile: role === 'client' ? clientProfile : null
+            role
         });
         await user.save();
         const token = genrateToken(user);
@@ -79,7 +75,7 @@ exports.updateProfile = async(req, res) => {
         const user = await User.findByIdAndUpdate(req.user.id, updates, {
             new: true,
             runValidators: true
-        }).populate('clientProfile');
+        });
 
         res.status(200).json(user);
     } catch (err) {
