@@ -88,6 +88,17 @@ exports.linkEmployeeWithClient = async(req, res) => {
         console.log(err)
     }
 }
+exports.unLinkEmployeeWithClient = async(req, res) => {
+    try {
+        const { employeeId } = req.body;
+        const employee = await Employee.findById(employeeId);
+        employee.client = null;
+        await employee.save();
+        res.status(200).json(employee);
+    } catch (err) {
+        console.log(err)
+    }
+}
 exports.getAllClients = async(req, res) => {
     try {
         const clients = await User.find({ role: 'client' });

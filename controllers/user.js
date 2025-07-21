@@ -1,5 +1,10 @@
 const User = require("../models/User");
+const Employee = require("../models/Employee");
+const Jisr = require("../models/Jisr");
+const axios = require('axios');
 const jwt = require("jsonwebtoken");
+const { param } = require("../routes/user");
+
 const genrateToken = (user) => {
     return jwt.sign({
             id: user._id,
@@ -32,7 +37,7 @@ exports.register = async(req, res) => {
 exports.login = async(req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email }).populate('clientProfile');
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({
                 message: "بيانات الدخول خطاء!"
@@ -82,3 +87,43 @@ exports.updateProfile = async(req, res) => {
         res.status(500).json({ message: 'خطأ أثناء التحديث', error: err.message });
     }
 };
+exports.getClientEmployees = async(req, res) => {
+    try {
+        const clientId = req.user.id;
+        const employees = await Employee.find({ "client.client": clientId });
+        res.status(200).json({
+            employees: employees
+        })
+    } catch (err) {
+        res.status(500).json({ message: 'خطأ أثناء التحديث', error: err.message });
+    }
+}
+exports.getEmpDetatils = async(req, res) => {
+    try {
+        const jisrId = req.body.jisrId;
+        const jisr = await Jisr.findOne();
+        let config = {
+            method: '',
+            maxBodyLength: Infinity,
+            url: 'https://api.jisr.net/openapi/v1/employees/basic_info',
+            headers: {
+                'slug': 'shebla',
+                'api-key': jisr.apiKey,
+                'secret': jisr.apiSecret,
+                'Access-Token': jisr.token,
+                'Accept': 'application/json',
+                'api-version': '1'
+            },
+            params: {
+                id: jisrId
+            }
+        };
+        const data = await axios.request(config);
+        res.status(200).json({
+            employee: data.data.data.employee
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'خطأ أثناء التحديث', error: err.message });
+    }
+}
