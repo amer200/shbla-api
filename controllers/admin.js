@@ -67,6 +67,7 @@ exports.linkEmployeeWithClient = async(req, res) => {
         if (!employee) {
             const newEmployee = new Employee({
                 jasirId: jasirId,
+                name: name,
                 client: {
                     title: title,
                     client: clientId
