@@ -80,6 +80,7 @@ exports.linkEmployeeWithClient = async(req, res) => {
         } else {
             employee.client.client = clientId;
             employee.client.title = title;
+            employee.name = name;
             await employee.save();
             res.status(200).json({
                 employee: employee
