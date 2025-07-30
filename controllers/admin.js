@@ -62,12 +62,11 @@ exports.getAllLocalEmployees = async(req, res) => {
 }
 exports.linkEmployeeWithClient = async(req, res) => {
     try {
-        const { jasirId, clientId, title, name } = req.body;
+        const { jasirId, clientId, title } = req.body;
         const employee = await Employee.findOne({ jasirId: jasirId });
         if (!employee) {
             const newEmployee = new Employee({
                 jasirId: jasirId,
-                name: name,
                 client: {
                     title: title,
                     client: clientId
